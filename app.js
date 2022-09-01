@@ -97,7 +97,7 @@ class UI {
             tempTotal += item.price * item.amount
             itemsTotal += item.amount
         })
-        cartTotal.innerText = parseFloat(tempTotal.toFixed(2))
+        cartTotal.innerText = tempTotal
         cartItems.innerText = itemsTotal
         console.log(cartTotal, cartItems);
     }
@@ -113,7 +113,7 @@ class UI {
                             <div>
                                 <i class="fas fa-chevron-up" data-id=${item.id}></i>
                                 <p class="item-amount">${item.amount}</p>
-                                <i class="fas fa-chevron-down data-id=${item.id}"></i>
+                                <i class="fas fa-chevron-down" data-id=${item.id}></i>
                             </div>`
         cartContainer.appendChild(div)
         console.log(div);
@@ -121,6 +121,81 @@ class UI {
     showCart(){
         cartModal.classList.add('transparentBcg')
         cartDOM.classList.add('showCart')
+    }//metodo mostrar carrito
+    setupAPP(){
+        cart = Storage.getCart()
+        this.setCartValues(cart)
+        this.populateCart(cart)
+        cartBtn.addEventListener('click',this.showCart)
+        closeCartBtn.addEventListener('click',this.hideCart)
+    }
+    populateCart(cart) {
+        cart.forEach(item => this.addCartItem(item));
+    }
+    hideCart(){
+        cartModal.classList.remove('transparentBcg')
+        cartDOM.classList.remove('showCart')
+    }
+    cartLogic(){
+        //limpiar carrito
+        clearCartBtn.addEventListener('click', () => this.clearCart());
+        //funcionalidad del Carrito
+        cartContainer.addEventListener('click', event =>{
+            console.log(event.target);
+            if(event.target.classList.contains('remove-item')){
+                let removeItem = event.target
+                let id = removeItem.dataset.id
+                cartContainer.removeChild(removeItem.parentElement.parentElement)
+                this.removeItem(id)
+            }
+            else if(event.target.classList.contains('fa-chevron-up')){
+                let addAmount = event.target
+                let id = addAmount.dataset.id
+                let tempItem = cart.find(item => item.id === id)
+                tempItem.amount = tempItem.amount + 1
+                Storage.saveCart(cart)
+                this.setCartValues(cart)
+                addAmount.nextElementSibling.innerText = tempItem.amount
+            }
+            else if(event.target.classList.contains('fa-chevron-down')){
+                let lowerAmount = event.target
+                console.log(lowerAmount);
+                let id = lowerAmount.dataset.id
+                console.log(id);
+                let tempItem = cart.find(item => item.id === id)
+                console.log(tempItem);
+                tempItem.amount = tempItem.amount - 1;
+                if(tempItem.amount > 0){
+                    Storage.saveCart(cart);
+                    this.setCartValues(cart);
+                    lowerAmount.previousElementSibling.innerText = tempItem.amount
+                }else{
+                    cartContainer.removeChild(lowerAmount.parentElement.parentElement)
+                    this.removeItem(id)
+                }
+            }
+        })
+    }
+    clearCart(){
+        let cartItems = cart.map(item => item.id)
+        console.log(cartItems)//mapeo los id de los productos cargados en el carrito
+        cartItems.forEach(id => this.removeItem(id))
+        console.log(cartContainer.children);
+        while(cartContainer.children.length>0){
+            cartContainer.removeChild(cartContainer.children[0])
+        }
+        this.hideCart()
+    }
+    removeItem(id){
+        cart = cart.filter(item => item.id !== id)
+        this.setCartValues(cart)
+        Storage.saveCart(cart)
+        let button = this.getSingleButton(id)
+        button.disabled = false
+        button.innerHTML = `<i class="fas fa-shopping-cart"></i>añadir al carrito`
+    }
+    getSingleButton(id){
+        return buttonsDOM.find(button=> button.dataset.id === id)
     }
 }
 //localStorage
@@ -135,17 +210,21 @@ class Storage{
     static saveCart(cart){
         localStorage.setItem("cart", JSON.stringify(cart))
     }
+    static getCart(){
+        return localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : []
+    }
 }
 //Evento carga del DOM
 document.addEventListener('DOMContentLoaded',()=>{
     const ui = new UI()
     const products = new Products()
-    
+    ui.setupAPP()
     // traer todos los productos metodo getProducts
     products.getProducts().then(products=> {
         ui.displayProducts(products)
         Storage.saveProducts(products)
     }).then(()=> {
         ui.getCartButtons()
+        ui.cartLogic()
     })//Mostrar productos y automaticamente cargarlos el localStorage
 })//del objeto productos, aplico metodo conseguir productos, capturo la respuesta y con el objeto UI aplico su metodo mostrar productos para renderizar el DOM

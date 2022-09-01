@@ -2,50 +2,50 @@
     "items": [
         {
             "id": "1",
-            "title": "queen panel bed",
-            "price": 10.99,
+            "title": "Cama queen size",
+            "price": 95000,
             "image":  "./images/product-1.jpeg" 
         },
         {
             "id": "2",
-            "title": "king panel bed",
-            "price": 12.99,
+            "title": "Cama king size",
+            "price": 134000,
             "image": "./images/product-2.jpeg"
         },
         {
             "id": "3", 
-            "title": "single panel bed",
-            "price": 12.99,
+            "title": "Cama de una plaza",
+            "price": 12000,
             "image":"./images/product-3.jpeg" 
         },
         {
             "id": "4",
-            "title": "twin panel bed",
-            "price": 22.99,
+            "title": "Cama de dos plazas",
+            "price": 22000,
             "image": "./images/product-4.jpeg" 
         },
         {
             "id": "5",
-            "title": "fridge",
-            "price": 88.99,
+            "title": "refrigerador",
+            "price": 94000,
             "image": "./images/product-5.jpeg" 
         },
         {
             "id": "6",
-            "title": "dresser",
-            "price": 32.99,
+            "title": "vestidor",
+            "price": 31000,
             "image": "./images/product-6.jpeg" 
         },
         {
             "id": "7",
-            "title": "couch",
-            "price": 45.99,
+            "title": "sofá",
+            "price": 59000,
             "image": "./images/product-7.jpeg" 
         },
         {
             "id": "8",
-            "title": "table",
-            "price": 33.99,
+            "title": "mesa",
+            "price": 15000,
             "image": "./images/product-8.jpeg"
         }
     ]
